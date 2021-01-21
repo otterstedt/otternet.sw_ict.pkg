@@ -1,0 +1,17 @@
+[Unit]
+Description=GPS Tracker
+Requires=gpsd.service
+After=network.target
+
+[Service]
+ExecStart=/home/pi/ict/api/geospatial-api.py
+WorkingDirectory=/home/pi/ict/api
+User=root
+RestartSec=5
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=geospatial-api
+
+[Install]
+WantedBy=multi-user.target

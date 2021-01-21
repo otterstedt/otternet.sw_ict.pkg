@@ -1,0 +1,16 @@
+[Unit]
+Description=Location Tracker
+After=network.target
+
+[Service]
+ExecStart=/home/pi/ict/tracker/tracker.py
+WorkingDirectory=/home/pi/ict/tracker
+User=pi
+RestartSec=5
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=location-tracker
+
+[Install]
+WantedBy=multi-user.target

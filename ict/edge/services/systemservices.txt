@@ -1,0 +1,8 @@
+influxdb
+gpsd
+motion
+
+/etc/udev/rules.d/90-otternet.rules
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1d6b", ATTRS{idProduct}=="0002", ATTRS{serial}=="3f980000.usb", SYMLINK+="gps"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", ATTRS{serial}=="3f980000.usb", SYMLINK+="gps"
+webcam

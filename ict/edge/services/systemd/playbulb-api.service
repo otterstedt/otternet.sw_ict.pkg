@@ -1,0 +1,16 @@
+[Unit]
+Description=Playbulb API
+After=network.target
+
+[Service]
+ExecStart=/home/pi/ict/api/playbulb-api.py
+WorkingDirectory=/home/pi/ict/api
+User=pi
+RestartSec=5
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=playbulb-api
+
+[Install]
+WantedBy=multi-user.target
