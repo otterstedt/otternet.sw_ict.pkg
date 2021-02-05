@@ -150,13 +150,13 @@ def sendRgb(red, green, blue):
     try:
         requests.get(config['endpoint']['sensehat'] + "/sensehat/color/" + str(red) + "/" + str(green) + "/" + str(blue), timeout=1);
     except Exception as e:
-        print("Failed to send color to GPS/Sensehat API: " + str(e.message));
+        print("Failed to send color to GPS/Sensehat API: " + str(e));
 
 def sendText(text):
     try:
         requests.get(config['endpoint']['sensehat'] + "/sensehat/text/" + text, timeout=30);
     except Exception as e:
-        print("Unable to send text to GPS/Sensehat API: " + str(e.message));
+        print("Unable to send text to GPS/Sensehat API: " + str(e));
 
 def showGreen():
     sendRgb(0,255,0);
@@ -199,7 +199,7 @@ def postDB(dbname, payload):
     try:
         requests.post("http://localhost:8086/write?db=" + dbname, data=payload, timeout=2)
     except Exception as e:
-        print("Request failed: " + str(e.message));
+        print("Request failed: " + str(e));
 
 
 sendRgb(50, 50, 50);
@@ -400,7 +400,7 @@ while True:
             sleep(10);
             continue;
     except Exception as e:
-        print("Unable to get the GPS/sensehat data" + str(e.message));
+        print("Unable to get the GPS/sensehat data" + str(e);
         sleep(5);
         continue;
 
