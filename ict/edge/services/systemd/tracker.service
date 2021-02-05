@@ -1,9 +1,10 @@
 [Unit]
 Description=Location Tracker
-After=network.target
+Requires=geospatial-api.service ict.influxdb.service
+After=network.target geospatial-api.service
 
 [Service]
-ExecStart=/home/pi/ict/tracker/tracker.py
+ExecStart=/home/pi/python/venvs/ict3/bin/python /home/pi/ict/tracker/tracker.py
 WorkingDirectory=/home/pi/ict/tracker
 User=pi
 RestartSec=5

@@ -1,0 +1,18 @@
+[Unit]
+Description=InfluxDB Docker
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker run --name=influxdb -p 8086:8086 -v /home/pi/usbstick/influxdb:/var/lib/influxdb influxdb:1.8.4
+ExecStop=/usr/bin/docker stop influxdb
+ExecStopPost=/usr/bin/docker rm influxdb
+ExecReload=/usr/bin/docker restart influxdb
+User=pi
+WorkingDirectory=/home/pi/usbstick/influxdb
+RestartSec=10
+Restart=always
+TimeoutSec=600
+
+[Install]
+WantedBy=multi-user.target
