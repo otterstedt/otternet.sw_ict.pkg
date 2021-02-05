@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-
+import sys
+import os
 from time import sleep
 from bottle import route, run, response, abort
 from sense_hat import SenseHat
@@ -72,7 +73,7 @@ class gpsPoller(object):
 
     def __init__(self, interval=1):
 
-        #subprocess.call('sudo gpsd /dev/gps -S 2948', shell=True)
+        print("Starting gpsd poller")
         sleep(5)
         self.agps = AGPS3mechanism()  # Instantiate AGPS3 Mechanisms
         self.agps.stream_data(port=2947)  # From localhost (), or other hosts, by example, (host='gps.ddns.net')
@@ -87,6 +88,7 @@ class gpsPoller(object):
         thread.daemon = True                            # Daemonize thread
         thread.start()                                  # Start the execution
 
+    #only works if root
     def resetGps(self):
         print("Resetting GPS Dongle.")
         try:
@@ -102,23 +104,17 @@ class gpsPoller(object):
         while True:
             try:
                 if failures > 120:
-                    print("Stopping/Starting agps3")
-                    self.agps.stop()
-                    self.agps = None;
-                    self.resetGps();
-                    #subprocess.call('sudo killall gpsd', shell=True)
-                    sleep(5)
-                    subprocess.call('sudo service gpsd restart', shell=True)
-                    sleep(5)
-                    self.agps = AGPS3mechanism()
-                    self.agps.stream_data(port=2947)  # From localhost (), or other hosts, by example, (host='gps.ddns.net')
-                    self.agps.run_thread()
-                    failures = 0
+                    print("Exit Geospatial API due to missing GPS data")
+                    #os.kill(os.getpid(), signal.SIGINT)
+                    os._exit(1)
+                    #this will trigger a service restart if configured as systemd service with restart
+                  
 
                 current = self.agps.data_stream.time
                 print("current: '" + str(current) + "' last: " + str(self.laststamp));
                 if (current != "n/a") and current != self.laststamp:
                     self.active = True;
+                    failures = 0
                 else:
                     self.active = False;
                     failures += 1;
@@ -126,7 +122,11 @@ class gpsPoller(object):
                 print("is active: " + str(self.active));
 
                 self.laststamp = current;
+            except SystemExit as se:
+                print("System exit")
+                sys.exit(1)
             except Exception as e:
+                print("Loop had exception")
                 self.active = False;
                 failures += 1;
 
@@ -143,7 +143,7 @@ class gpsPoller(object):
 spoller = SenseHatPoller();
 sense = spoller.getHat();
 
-gpspoller = gpsPoller();
+gpspoller = gpsPoller(1.001);
 
 @route('/gps/current')
 @route('/gps/current/')
@@ -188,7 +188,7 @@ def gps():
 
         execution = time.time() - start_time;
 
-        return { "execution": execution, "satellites": satellites, "climb": climb, "course": course, "temp": t, "pressure": p, "humidity": h, "time": timens, "lat": latitude, "lon": longitude, "alt": altitude, "speed": speed, "pitch": pitch, "roll": roll, "yaw": yaw, "x":  x, "y": y, "z": z, "content": True}
+        return { "execution": execution, "isotime": timegps, "satellites": satellites, "climb": climb, "course": course, "temp": t, "pressure": p, "humidity": h, "time": timens, "lat": latitude, "lon": longitude, "alt": altitude, "speed": speed, "pitch": pitch, "roll": roll, "yaw": yaw, "x":  x, "y": y, "z": z, "content": True}
     else:
         execution = time.time() - start_time;
         response.status = 503

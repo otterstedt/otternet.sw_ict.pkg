@@ -1,0 +1,17 @@
+[Unit]
+Description=GPS time service
+Requires=gpsd.service
+After=network.target
+
+[Service]
+ExecStart=/home/pi/python/venvs/ict3/bin/python /home/pi/ict/scripts/gpstime.py
+WorkingDirectory=/home/pi/ict/scripts/
+User=root
+RestartSec=5
+Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=gpstime
+
+[Install]
+WantedBy=multi-user.target

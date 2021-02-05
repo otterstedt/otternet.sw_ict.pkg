@@ -4,14 +4,14 @@ Requires=gpsd.service
 After=network.target
 
 [Service]
-ExecStart=/home/pi/ict/api/geospatial-api.py
+ExecStart=/home/pi/python/venvs/ict3/bin/python /home/pi/ict/api/geospatial-api.py
 WorkingDirectory=/home/pi/ict/api
-User=root
-RestartSec=5
+User=pi
+RestartSec=10
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=geospatial-api
+SyslogIdentifier=ict.api.geospatial
 
 [Install]
 WantedBy=multi-user.target

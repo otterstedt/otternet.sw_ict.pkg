@@ -19,6 +19,7 @@ from gi.repository import GExiv2
 from PIL import Image
 import paho.mqtt.client as mqtt
 import base64
+from shutil import copyfile
 
 import configparser
 config = configparser.ConfigParser()
@@ -60,7 +61,7 @@ topic = config['mqtt']['state_topic']
 locationtopic = config['mqtt']['location_topic']
 
 #imagetopic = "hass/message/image/dclxvi_pi/front"
-imagetopic = config['mqtt']['image_topic]
+imagetopic = config['mqtt']['image_topic']
 
 
 #url = "mqtt.otternet.ca"
@@ -147,13 +148,13 @@ def grabImage(host, port, output):
 #send color to sensehat API
 def sendRgb(red, green, blue):
     try:
-        requests.get("http://gps.v60:8082/sensehat/color/" + str(red) + "/" + str(green) + "/" + str(blue), timeout=1);
+        requests.get(config['endpoint']['sensehat'] + "/sensehat/color/" + str(red) + "/" + str(green) + "/" + str(blue), timeout=1);
     except Exception as e:
         print("Failed to send color to GPS/Sensehat API: " + str(e.message));
 
 def sendText(text):
     try:
-        requests.get("http://gps.v60:8082/sensehat/text/" + text, timeout=30);
+        requests.get(config['endpoint']['sensehat'] + "/sensehat/text/" + text, timeout=30);
     except Exception as e:
         print("Unable to send text to GPS/Sensehat API: " + str(e.message));
 
@@ -211,7 +212,7 @@ while True:
     waitForGpsDevice();
 
     try:
-        response = requests.get("http://gps.v60:8082/gps/current", timeout=2).json();
+        response = requests.get(config['endpoint']['tracking_api'] + "/gps/current", timeout=2).json();
 
         if response['content']:
             print("Got response from GPS/sensors API")
@@ -259,7 +260,8 @@ while True:
 
             print("Grabbing image from stream to: " + img);
             showFlash();
-            grabImage("localhost", 8001, img);
+            #grabImage("localhost", 8001, img);
+            copyfile(config['motion']['snapshot'], img)
             print("Completed grabbing image from stream" + img);
             showGreen();
 
